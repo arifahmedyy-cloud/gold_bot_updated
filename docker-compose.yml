@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  gold-bot:
+    build: .
+    container_name: gold-trading-bot
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env:ro
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
